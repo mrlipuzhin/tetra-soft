@@ -6,6 +6,9 @@ public class Triangle {
     private int angle3;
 
     public static Triangle create(int angle1, int angle2, int angle3) throws IllegalArgumentException {
+        if (angle1 <= 0 || angle2 <= 0 || angle3 <= 0) {
+            throw new IllegalArgumentException("Each angle must be greater than 0");
+        }
         if (angle1 + angle2 + angle3 != 180) {
             throw new IllegalArgumentException("The sum of the angles must be equal to 180");
         }
