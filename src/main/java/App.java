@@ -6,12 +6,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.prefs.InvalidPreferencesFormatException;
 import java.util.prefs.Preferences;
 
 class App {
+    private static final String ENABLE_LOGGING = "enable_logging";
     private static final String DATA_DIR = "data_dir";
     private static final String OUTPUT_DIR = "output_dir";
 
@@ -39,8 +39,12 @@ class App {
     }
 
     private void prepareLogger() throws IOException {
-        Logger.getGlobal().setUseParentHandlers(false);
-        Logger.getGlobal().addHandler(new FileHandler());
+        Preferences prefs = Preferences.userRoot().node("tetrasoft");
+        boolean enableLogging = prefs.getBoolean(ENABLE_LOGGING, false);
+
+        if (!enableLogging) {
+            Logger.getGlobal().setUseParentHandlers(false);
+        }
     }
 
     private void loadConfig() throws InvalidPreferencesFormatException, IOException {
