@@ -9,7 +9,7 @@ import java.util.Date;
 public class Writer {
     private File outputFile;
 
-    public Writer(File outputDir) {
+    public Writer(File outputDir) throws IOException {
         this.outputFile = getOutputFileName(outputDir);
     }
 
@@ -31,9 +31,15 @@ public class Writer {
         }
     }
 
-    private File getOutputFileName(File outputDir) {
+    private File getOutputFileName(File outputDir) throws IOException {
         Long currentTimestamp = new Date().getTime();
         String fileName = String.format("%s.txt", currentTimestamp);
+
+        if (!outputDir.exists()) {
+            if (!outputDir.mkdirs()) {
+                throw new IOException(String.format("Failed to create directory %s", outputDir));
+            }
+        }
 
         return new File(outputDir, fileName);
     }
