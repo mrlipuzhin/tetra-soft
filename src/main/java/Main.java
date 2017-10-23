@@ -1,6 +1,7 @@
 import info.AppInfo;
 
 import java.io.IOException;
+import java.util.prefs.InvalidPreferencesFormatException;
 
 public class Main {
     public static void main(String[] args) {
@@ -10,7 +11,7 @@ public class Main {
         App app = new App();
         try {
             app.start();
-        } catch (IOException e) {
+        } catch (IOException | InvalidPreferencesFormatException e) {
             e.printStackTrace();
         }
     }

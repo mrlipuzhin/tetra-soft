@@ -1,6 +1,6 @@
 package objects;
 
-public class Triangle {
+public class Triangle implements Comparable<Triangle> {
     private int angle1;
     private int angle2;
     private int angle3;
@@ -36,5 +36,18 @@ public class Triangle {
     @Override
     public String toString() {
         return String.format("Triangle: %d, %d, %d", getAngle1(), getAngle2(), getAngle3());
+    }
+
+    @Override
+    public int compareTo(Triangle o) {
+        if (this.getAngle1() == o.getAngle1()) {
+                if (this.getAngle2() == o.getAngle2()) {
+                    return this.getAngle3() - o.getAngle3();
+                } else {
+                    return this.getAngle2() - o.getAngle2();
+                }
+            } else {
+                return this.getAngle1() - o.getAngle1();
+            }
     }
 }

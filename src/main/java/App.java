@@ -3,20 +3,22 @@ import readers.TriangleReader;
 import writers.Writer;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
+import java.util.prefs.InvalidPreferencesFormatException;
+import java.util.prefs.Preferences;
 
 class App {
+    private static final String DATA_DIR = "data_dir";
+    private static final String OUTPUT_DIR = "output_dir";
+
     private File dataDir;
     private File outputDir;
 
-    void start() throws IOException {
+    void start() throws IOException, InvalidPreferencesFormatException {
         prepareLogger();
         loadConfig();
 
@@ -30,18 +32,7 @@ class App {
             TriangleReader tr = new TriangleReader(file);
             tr.read(resultCollection);
         }
-
-        resultCollection.sort((Triangle t1, Triangle t2) -> {
-            if (t1.getAngle1() == t2.getAngle1()) {
-                if (t1.getAngle2() == t2.getAngle2()) {
-                    return t1.getAngle3() - t2.getAngle3();
-                } else {
-                    return t1.getAngle2() - t2.getAngle2();
-                }
-            } else {
-                return t1.getAngle1() - t2.getAngle1();
-            }
-        });
+        resultCollection.sort(Triangle::compareTo);
 
         Writer writer = new Writer(outputDir);
         writer.write(resultCollection);
@@ -52,19 +43,22 @@ class App {
         Logger.getGlobal().addHandler(new FileHandler());
     }
 
-    private void loadConfig() throws IOException {
-        Properties prop = new Properties();
-        String propFileName = "config.properties";
+    private void loadConfig() throws InvalidPreferencesFormatException, IOException {
+        Preferences prefs = Preferences.userRoot().node("tetrasoft");
 
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
-
-        if (inputStream != null) {
-            prop.load(inputStream);
-        } else {
-            throw new FileNotFoundException("property file '" + propFileName + "' not found in the classpath");
+        String defaultDataDir = new File(".").getCanonicalPath().concat("/src/main/resources/data");
+        String dataDirPath = prefs.get(DATA_DIR,defaultDataDir);
+        if (dataDirPath == null) {
+            throw new InvalidPreferencesFormatException(String.format("%s must be set in app preferences", DATA_DIR));
         }
 
-        dataDir = new File(prop.getProperty("dataDir"));
-        outputDir = new File(prop.getProperty("outputDir"));
+        String defaultOutputDir = System.getProperty("user.home");
+        String outputDirPath = prefs.get(OUTPUT_DIR, defaultOutputDir);
+        if (outputDirPath == null) {
+            throw new InvalidPreferencesFormatException(String.format("%s must be set in app preferences", OUTPUT_DIR));
+        }
+
+        dataDir = new File(dataDirPath);
+        outputDir = new File(outputDirPath);
     }
 }
