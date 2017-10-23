@@ -11,7 +11,7 @@ public class AppInfo {
             long elapsedTime = stopTime - startTime;
             long heapSize = runtime.totalMemory() - runtime.freeMemory();
 
-            System.out.println(String.format("Time: %d ms\nStart heap size %dMb\nHeap size: %dMb",
+            System.out.println(String.format("Time: %d ms\nStart heap size %dMb\nEnd heap size: %dMb",
                     elapsedTime,
                     convertBytesToMb(startHeapSize),
                     convertBytesToMb(heapSize)));
