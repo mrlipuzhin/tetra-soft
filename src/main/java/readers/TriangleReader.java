@@ -18,17 +18,15 @@ public class TriangleReader {
         this.file = file;
     }
 
-    public Collection<Triangle> read() throws IOException {
+    public void read(Collection<Triangle> target) throws IOException {
         try (BufferedReader bf = new BufferedReader(new FileReader(file))) {
             int c;
-            ArrayList<Triangle> list = new ArrayList<>();
-
             List<Integer> angles = new ArrayList<>(3);
             while ((c = bf.read()) != -1) {
                 if (c == 0x03 && angles.size() == 3) {
                     try {
                         Triangle triangle = Triangle.create(angles.get(0), angles.get(1), angles.get(2));
-                        list.add(triangle);
+                        target.add(triangle);
                     } catch (IllegalArgumentException e) {
                         Logger.getGlobal().warning(e.getMessage());
                     }
@@ -41,8 +39,6 @@ public class TriangleReader {
                 angles.add(c);
             }
             bf.close();
-
-            return list;
         } catch (IOException e) {
             e.printStackTrace();
             throw e;
